@@ -27,3 +27,6 @@ Source: "{#OPENSSL_LIBS_PATH}\libssl-1_1-x64.dll"; DestDir: "{app}\Bin"; Flags: 
 
 ; PQSQL (PostgreSQL client)
 Source: "..\..\libraries\libpq-12.2\x64\*.dll"; DestDir: "{app}\Bin"; Flags: ignoreversion; Components: server admintools;
+
+; MySQL
+Source: "..\..\libraries\libmysql-6.1.11\libmysql.dll"; DestDir: "{app}\Bin"; Flags: ignoreversion; Components: server admintools;
