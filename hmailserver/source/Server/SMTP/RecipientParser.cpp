@@ -151,6 +151,13 @@ namespace HM
                return DP_Possible;
             }
 
+            // Check if catch-all account is specified.
+            String sPostMaster = pDomain->GetPostmaster();
+            if (!sPostMaster.IsEmpty())
+            {
+               return DP_Possible;
+            }
+
             // OK, we are now finished looking through the domain.
          }
 
@@ -176,26 +183,10 @@ namespace HM
             }
          }
 
-         // If this is a local domain, try to find a catch-all 
-         // account for this domain.
-
-         if (pDomain)
+         // Domain is not local. SMTPConnection should determine
+         // whether the sender is allowed to send.
+         if (!pDomain)
          {
-            String sPostMaster = pDomain->GetPostmaster();
-
-            if (!sPostMaster.IsEmpty())
-            {
-               // Could not find the address, but a post master was specified,
-               // so we'll send to him instead.
-               // Found an alias.
-               recipientAddress = sPostMaster;
-               continue;
-            }
-         }
-         else
-         {
-            // Domain is not local. SMTPConnection should determine
-            // whether the sender is allowed to send.
             return DP_Possible;
          }
 
@@ -301,6 +292,15 @@ namespace HM
             return;
          }
 
+         // Could not find the address, but a post master was specified,
+         // so we'll send to him instead.
+         String sPostMaster = pDomain->GetPostmaster();
+         if (!sPostMaster.IsEmpty())
+         {
+            CreateMessageRecipientList_(sPostMaster, sOriginalAddress, lRecurse, pRecipients, recipientOK);
+
+            return;
+         }
       }
       
       // Check for routes. This happens under two circumstances:
@@ -331,20 +331,7 @@ namespace HM
             return;
       }
 
-      if (bIsLocalDomain)
-      {
-         String sPostMaster = pDomain->GetPostmaster();
-         if (!sPostMaster.IsEmpty())
-         {
-            // The domain is local but we could not find the recipient address
-            // in our domain. We've looked in routes as well but not found a
-            // match there either.
-            CreateMessageRecipientList_(sPostMaster, sOriginalAddress, lRecurse, pRecipients, recipientOK);
-
-            return;
-         }
-      }
-      else
+      if (!bIsLocalDomain)
       {
          // The recipient is external. We have already checked if it's OK that the user
          // delivers to this, so go ahead.
