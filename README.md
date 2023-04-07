@@ -25,7 +25,7 @@ Environment set up
    * An installed version of hMailServer 5.7 (configured with a database)
    * Visual Studio 2019 Community edition
    * [InnoSetup 5.6.1 (non-unicode version)](https://files.jrsoftware.org/is/5/)
-   * [Strawberry Perl](https://www.activestate.com/activeperl/downloads) or [ActivePerl Community Edition](https://www.activestate.com/activeperl/downloads)
+   * [Strawberry Perl](https://strawberryperl.com) or [ActivePerl Community Edition](https://www.activestate.com/activeperl/downloads)
    
 **NOTE**
 
