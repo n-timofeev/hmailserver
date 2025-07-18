@@ -40,26 +40,37 @@ namespace HM
                                         const std::shared_ptr<Message> pOriginalMessage)
    {
       
-      
-      
-      
       if (!CanSendVacationMessage_(recipientAccount->GetAddress(), sToAddress))
          return; // We have already notified this user.
-      
-      LOG_DEBUG("Creating out-of-office message.");      
 
+      if (sToAddress.FindNoCase(_T("noreply@")) == 0 ||
+          sToAddress.FindNoCase(_T("no-reply@")) == 0 ||
+          sToAddress.FindNoCase(_T("do-not-reply@")) == 0)
+         return;
+      
       String sModifiedSubject = sVacationSubject;
       String sModifiedBody = sVacationMessage;
 
       const String originalFileName = PersistentMessage::GetFileName(recipientAccount, pOriginalMessage);
 
+      MimeHeader header;
+      AnsiString sHeader = PersistentMessage::LoadHeader(originalFileName);
+      header.Load(sHeader, sHeader.GetLength(), true);
+
+      // Don't reply on auto-generated messages
+      if (header.GetField("Auto-Submitted"))
+      {
+         String sHeaderValue;
+         sHeaderValue = header.GetField("Auto-Submitted")->GetValue();
+         if (sHeaderValue.CompareNoCase(_T("no")) != 0)
+            return;
+      }
+
+      LOG_DEBUG("Creating out-of-office message.");
+
       if (sModifiedSubject.Find(_T("%")) >= 0 || sModifiedBody.Find(_T("%")) >= 0)
       {
          // Replace macros in the string.
-         MimeHeader header;
-         AnsiString sHeader = PersistentMessage::LoadHeader(originalFileName);
-         header.Load(sHeader, sHeader.GetLength(), true);
-
          String sOldSubject;
          if (header.GetField("Subject"))
             sOldSubject = header.GetField("Subject")->GetValue();
@@ -72,11 +83,6 @@ namespace HM
       {
          // Parse out the subject in the original
          // message, so that we can Re: that..
-         MimeHeader header;
-
-         AnsiString sHeader = PersistentMessage::LoadHeader(originalFileName);
-         header.Load(sHeader, sHeader.GetLength(), true);
-
          String sOldSubject;
          if (header.GetField("Subject"))
             sOldSubject = header.GetField("Subject")->GetValue();
@@ -107,7 +113,7 @@ namespace HM
       pNewMsgData->SetTo(sToAddress);
       pNewMsgData->SetSubject(sModifiedSubject);
       pNewMsgData->SetBody(sModifiedBody);
-	  pNewMsgData->SetAutoReplied();
+	   pNewMsgData->SetAutoReplied();
       pNewMsgData->IncreaseRuleLoopCount();
       
       // Write message data
