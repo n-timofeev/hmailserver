@@ -66,6 +66,15 @@ namespace HM
             return;
       }
 
+      // Don't reply on mail system administrative messages (rfc3462)
+      if (header.GetField("Content-Type"))
+      {
+         String sHeaderValue;
+         sHeaderValue = header.GetField("Content-Type")->GetValue();
+         if (sHeaderValue.FindNoCase(_T("multipart/report;")) == 0)
+            return;
+      }
+
       LOG_DEBUG("Creating out-of-office message.");
 
       if (sModifiedSubject.Find(_T("%")) >= 0 || sModifiedBody.Find(_T("%")) >= 0)
