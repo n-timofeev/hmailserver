@@ -1595,6 +1595,10 @@ interface IInterfaceClient : IDispatch{
    [propget, id(3), helpstring("The username of the client.")] HRESULT Username([out, retval] BSTR* pVal);
    [propget, id(4), helpstring("The HELO greeting sent by client.")] HRESULT HELO([out, retval] BSTR* pVal);
    [propget, id(5), helpstring("The logon status of the client.")] HRESULT Authenticated([out, retval] VARIANT_BOOL* pVal);
+   [propget, id(6), helpstring("The SSL/TLS status of the client.")] HRESULT EncryptedConnection([out, retval] VARIANT_BOOL* pVal);
+   [propget, id(7), helpstring("The SSL/TLS cipher version of the client connection.")] HRESULT CipherVersion([out, retval] BSTR* pVal);
+   [propget, id(8), helpstring("The SSL/TLS cipher name of the client connection.")] HRESULT CipherName([out, retval] BSTR* pVal);
+   [propget, id(9), helpstring("The SSL/TLS cipher bits of the client connection.")] HRESULT CipherBits([out, retval] LONG* pVal);
    [propget, id(10), helpstring("The assigned SessionID for the TCP/IP connection.")] HRESULT SessionID([out, retval] LONG* pVal);
 };
 [
@@ -1644,9 +1648,10 @@ interface IInterfaceFetchAccount : IDispatch{
    [propget, id(21), helpstring("Gets or sets whether hMailServer should deliver to recipients in routes.")] HRESULT EnableRouteRecipients([out, retval] VARIANT_BOOL *pVal);
 	[propput, id(21), helpstring("Gets or sets whether hMailServer should deliver to recipients in routes.")] HRESULT EnableRouteRecipients([in] VARIANT_BOOL newVal);
 	[propget, id(22), helpstring("Gets whether the fetch account is currently locked")] HRESULT IsLocked([out, retval] VARIANT_BOOL* pVal);
-   [propget, id(23), helpstring("Connection security for this fetch account.")] HRESULT ConnectionSecurity([out, retval] eConnectionSecurity *pVal);
-   [propput, id(23), helpstring("Connection security for this fetch account.")] HRESULT ConnectionSecurity([in] eConnectionSecurity newVal);
-
+	[propget, id(23), helpstring("Connection security for this fetch account.")] HRESULT ConnectionSecurity([out, retval] eConnectionSecurity *pVal);
+	[propput, id(23), helpstring("Connection security for this fetch account.")] HRESULT ConnectionSecurity([in] eConnectionSecurity newVal);
+	[propget, id(24), helpstring("Read message recipients from these MIME headers.")] HRESULT MIMERecipientHeaders([out, retval] BSTR* pVal);
+	[propput, id(24), helpstring("Read message recipients from these MIME headers.")] HRESULT MIMERecipientHeaders([in] BSTR newVal);
 };
 [
 	object,
